@@ -3,9 +3,12 @@ class Criteria:
 
 
 class Criterium(Criteria):
-    def __init__(self, criterium, norm_score):
+    case = None
+
+    def __init__(self, criterium, norm_score=None, parent_criterium=None):
         self.criterium = criterium
         self.norm_score = norm_score
+        self.parent_criterium = parent_criterium
 
     def make_question(self, filler):
         return self.criterium.format(filler) + "?\n"
@@ -23,10 +26,13 @@ class Criterium(Criteria):
     def evaluate(self, case_value: object) -> int:
         pass
 
+    def set_case(self, new_case):
+        Criterium.case = new_case
+
 
 class CountCriterium(Criterium):
-    def __init__(self, criterium, count, norm_score):
-        super().__init__(criterium, norm_score)
+    def __init__(self, criterium, count, norm_score=None, parent_criterium=None):
+        super().__init__(criterium, norm_score, parent_criterium)
         self.count = count
 
     def __repr__(self):
@@ -54,8 +60,9 @@ class BooleanCriterium(Criterium):
     """
     Can child do x? {}
     """
-    def __init__(self, criterium, boolean, norm_score):
-        super().__init__(criterium, norm_score)
+
+    def __init__(self, criterium, boolean, norm_score=None, parent_criterium=None):
+        super().__init__(criterium, norm_score, parent_criterium)
         self.boolean = boolean
 
     def __repr__(self):
@@ -72,7 +79,12 @@ class BooleanCriterium(Criterium):
                 break
             except ValueError:
                 continue
+        if answer == self.boolean and self.parent_criterium is not None:
+            for parent in self.parent_criterium:
+                self.case.set_property(parent.criterium, parent.boolean)
+
         return answer
+
 
     def evaluate(self, case_value: object) -> int:
         if case_value == self.boolean:

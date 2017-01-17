@@ -9,8 +9,10 @@ class Child:
         else:
             self.name = name
 
-        self.norms = Norms()
         self.case = Case()
+        self.norms = Norms()
+        self.norms.set_case(self.case)
+
 
     def __repr__(self):
         return "Child({})".format(self.name)
