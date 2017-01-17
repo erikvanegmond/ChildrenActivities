@@ -12,7 +12,7 @@ class Planner:
         for i in range(self.num_plans_per_batch):
             activities.append(self.generate_plans())
             activities = self.filter(activities, self.requirements.hard_requirements())
-            activities = self.sort(activities, self.requirements.soft_requirements())
+            activities = self.sort_activities(activities, self.requirements.soft_requirements())
 
         print(activities)
 
