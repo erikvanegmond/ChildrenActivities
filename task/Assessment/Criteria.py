@@ -48,3 +48,32 @@ class CountCriterium(Criterium):
     def evaluate(self, case_value: object) -> int:
         if case_value >= self.count:
             return self.norm_score
+
+
+class BooleanCriterium(Criterium):
+    """
+    Can child do x? {}
+    """
+    def __init__(self, criterium, boolean, norm_score):
+        super().__init__(criterium, norm_score)
+        self.boolean = boolean
+
+    def __repr__(self):
+        return self.criterium.format(self.boolean)
+
+    def __str__(self):
+        return self.criterium.format(self.boolean)
+
+    def ask(self):
+        answer = None
+        while True:
+            try:
+                answer = int(input(self.make_question("True/False")))
+                break
+            except ValueError:
+                continue
+        return answer
+
+    def evaluate(self, case_value: object) -> int:
+        if case_value == self.boolean:
+            return self.norm_score
