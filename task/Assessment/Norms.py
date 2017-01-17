@@ -28,9 +28,10 @@ class Norm:
             # Get the score for this criterium
             score = criterium.evaluate(property_value)
 
-            # TODO: a better approach for the norm score
-            # If the score is better than before, override it
-            self.norm_score = max(score, self.norm_score)
+            if score is not None:
+                # TODO: a better approach for the norm score
+                # If the score is better than before, override it
+                self.norm_score = max(score, self.norm_score)
 
 
 class LanguageProductionNorm(Norm):
