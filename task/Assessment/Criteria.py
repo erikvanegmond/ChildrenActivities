@@ -68,7 +68,7 @@ class BooleanCriterium(Criterium):
         answer = None
         while True:
             try:
-                answer = int(input(self.make_question("True/False")))
+                answer = bool(input(self.make_question("True/False")))
                 break
             except ValueError:
                 continue

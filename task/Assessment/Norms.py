@@ -39,6 +39,8 @@ class LanguageProductionNorm(Norm):
         super().__init__()
         self.normCriteria.append(CountCriterium("Can speak {} words", 2, 12))
         self.normCriteria.append(CountCriterium("Can speak {} words", 10, 24))
+        self.normCriteria.append(BooleanCriterium("Child can vocalize? {}", True, 0))
+
 
 
 class LanguageComprehensionNorm(Norm):
