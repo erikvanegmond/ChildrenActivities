@@ -55,13 +55,61 @@ class Norm:
 class LanguageProductionNorm(Norm):
     def __init__(self):
         super().__init__()
-        self.normCriteria.append(CountCriterium("Can speak {} words", 2, 12))
-        self.normCriteria.append(CountCriterium("Can speak {} words", 10, 24))
         self.normCriteria.append(BooleanCriterium("Child can use 3 different vowels? {}", True, 4,
-                                                  parent_criterium=[BooleanCriterium("Child can use 2 different vowels? {}", True)]))
+                                                  parent_criterium=[
+                                                      BooleanCriterium("Child can use 2 different vowels? {}", True)]))
+
         self.normCriteria.append(BooleanCriterium("Child can use 2 different vowels? {}", True, 3,
-                                                  parent_criterium=[BooleanCriterium("Child can vocalize? {}", True)]))
+                                              parent_criterium=[BooleanCriterium("Child can vocalize? {}", True)]))
         self.normCriteria.append(BooleanCriterium("Child can vocalize? {}", True, 0))
+
+        self.normCriteria.append(CountCriterium("Can speak {} words", 2, 12))
+        self.normCriteria.append(CountCriterium("Can speak {} words", 4, 15))
+        self.normCriteria.append(CountCriterium("Can speak {} words", 6, 18))
+        self.normCriteria.append(CountCriterium("Can speak {} words", 25, 20))
+        self.normCriteria.append(CountCriterium("Can speak {} words", 50, 30))
+        self.normCriteria.append(CountCriterium("Can speak {} words", 200, 36))
+
+        self.normCriteria.append(BooleanCriterium("Child can vocalize without crying? {}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child can use one vowel {}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child reacts with body movements upon talking {}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child makes soft noise upon talking {}", True, 2))
+        self.normCriteria.append(BooleanCriterium("Child can use 2 different vowels? {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child brabbles {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child can laugh out loud {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child vocalizes in different ways {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child tries to imitate adults {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child tries to imitate 'talking' {}", True, 3))
+        self.normCriteria.append(
+            BooleanCriterium("Child combines vowels and consonants to make ba/da structures {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child can make at least 4 different sounds' {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child uses repeatable 2-syllable structures baba/dada {}", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child can use sounds to take its turn {}", True, 6))
+        self.normCriteria.append(BooleanCriterium(
+            "Child screams for attention and protests if by loud noise or crying something  happens that he/she dislikes {}",
+            True, 6))
+        self.normCriteria.append(BooleanCriterium("Child can imitate movements and sounds {}", True, 6))
+        self.normCriteria.append(
+            BooleanCriterium("Child smiles and vocalizes when meeting a faimliar person {}", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child can use intonation patterns similar to adults {}", True, 9))
+        self.normCriteria.append(
+            BooleanCriterium("Child can imitate face movements in combination with sounds {}", True, 9))
+        self.normCriteria.append(BooleanCriterium(
+            "Child vocalizes interactively and makes use of voice inflections as well as objects during interaction {}",
+            True, 12))
+        self.normCriteria.append(
+            BooleanCriterium("Child uses consistent same sounds for leaving/arriving {}", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child reacts in (semi) words to simple questions  {}", True, 12))
+        self.normCriteria.append(
+            BooleanCriterium("Child uses adult intonation pattern including questions and exclamations  {}", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child tries to sing along with songs {}", True, 15))
+        self.normCriteria.append(BooleanCriterium("Child is a good imitator and repeats words of adults {}", True, 15))
+        self.normCriteria.append(
+            BooleanCriterium("Child uses words for persons, objects, animals and 'no' {}", True, 15))
+        self.normCriteria.append(BooleanCriterium(
+            "Child uses consistent words for leaving/arriving/greeting and is able to describe movements with >2words {}",
+            True, 18))
+
 
 
 class LanguageComprehensionNorm(Norm):
