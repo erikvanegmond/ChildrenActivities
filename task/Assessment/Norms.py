@@ -52,6 +52,9 @@ class Norm:
             yield i
 
 
+# ToDO child prioritizer
+# TODO after 4x False stop questions
+
 class LanguageProductionNorm(Norm):
     def __init__(self):
         super().__init__()
@@ -60,8 +63,34 @@ class LanguageProductionNorm(Norm):
                                                       BooleanCriterium("Child can use 2 different vowels? {}", True)]))
 
         self.normCriteria.append(BooleanCriterium("Child can use 2 different vowels? {}", True, 3,
-                                              parent_criterium=[BooleanCriterium("Child can vocalize? {}", True)]))
-        self.normCriteria.append(BooleanCriterium("Child can vocalize? {}", True, 0))
+                                                  parent_criterium=[BooleanCriterium("Child can vocalize? {}", True)]))
+
+        self.normCriteria.append(BooleanCriterium("Child can imitate two-word-sentences {}", True, 18,
+                                                  parent_criterium=[BooleanCriterium(
+                                                      "Child is a good imitator and repeats words of adults {}", True),
+                                                                    (BooleanCriterium(
+                                                                        "Child can imitate movements and sounds {}",
+                                                                        True))]))
+
+        self.normCriteria.append(BooleanCriterium("Child is a good imitator and repeats words of adults {}", True, 15,
+                                                  parent_criterium=[
+                                                      BooleanCriterium("Child can imitate movements and sounds {}",
+                                                                       True)]))
+
+        self.normCriteria.append(BooleanCriterium("Child uses repeatable 2-syllable structures baba/dada {}", True, 6,
+                                                  parent_criterium=[
+                                                      BooleanCriterium("Child can use 2 different vowels? {}", True)]))
+
+        self.normCriteria.append(BooleanCriterium("Child uses adult-like intonation {}", True, 36,
+                                                  parent_criterium=[BooleanCriterium(
+                                                      "Child can use intonation patterns similar to adults {}", True),
+                                                      (BooleanCriterium(
+                                                          "Child uses adult intonation pattern including questions and exclamations  {}",
+                                                          True))]))
+
+        self.normCriteria.append(BooleanCriterium("Child can answer many questions{}", True, 36,
+                                                  parent_criterium=[BooleanCriterium(
+                                                      "Child reacts in (semi) words to simple questions  {}", True)]))
 
         self.normCriteria.append(CountCriterium("Can speak {} words", 2, 12))
         self.normCriteria.append(CountCriterium("Can speak {} words", 4, 15))
@@ -109,7 +138,21 @@ class LanguageProductionNorm(Norm):
         self.normCriteria.append(BooleanCriterium(
             "Child uses consistent words for leaving/arriving/greeting and is able to describe movements with >2words {}",
             True, 18))
-
+        self.normCriteria.append(BooleanCriterium("Child can imitate two-word-sentences {}", True, 18))
+        self.normCriteria.append(
+            BooleanCriterium("Child's speech is understandable for at least 2/3 of time {}", True, 18))
+        self.normCriteria.append(BooleanCriterium("Child can use 3 word-sentences {}", True, 34))
+        self.normCriteria.append(BooleanCriterium("Child takes turn in conversations {}", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child starts to undertand basic grammar {}", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child can say a child rhyme{}", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child asks w'questions like where, what {}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child can talk about experiences {}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child can say its full name {}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child can answer many questions{}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child can sing simple songs {}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child can whisper and scream {}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child can repeat a 6 word sentence {}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child uses adult-like intonation {}", True, 36))
 
 
 class LanguageComprehensionNorm(Norm):
@@ -120,6 +163,59 @@ class LanguageComprehensionNorm(Norm):
 class SocialSkillsNorm(Norm):
     def __init__(self):
         super().__init__()
+
+        self.normCriteria.append(CountCriterium("Can follow orders {} percent of time", 50, 24))
+        self.normCriteria.append(CountCriterium("Can follow orders {} percent of time", 75, 36))
+
+        self.normCriteria.append(BooleanCriterium("Child is quiet after picking up {}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child looks shortly at face {}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child smiles or makes noice after talking {}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child brings toy/object to mouth {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child expects to be lifted by i.e. moving limbs {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child smiles spontaneously {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child recognizes drinking bottle {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child plays with hands and clothes{}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child smiles at mirror image{}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child tries to grab piece of toy outside arm reach{}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child smiles if piece of cloth is put on head ", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child smiles at familiar game ", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child plays with feet", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child reacts on presence strangers by staring/crying", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child plays with different sorts of toys for 10min", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child joins with playing kiekeboe", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child plays simple games together", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child plays simple functional games", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child plays with ball by pushing it back", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child plays 15-20min alone without adult", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child often throws with toy if it doesn't want it", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child tries shows off to get attention of parents", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child helps with putting on simple clothes", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child shows toy to adult", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child turns image/book with correct side up to itself", True, 15))
+        self.normCriteria.append(BooleanCriterium("Child imitates domestic work", True, 15))
+        self.normCriteria.append(BooleanCriterium("Child plays in meaningful manner", True, 15))
+        self.normCriteria.append(BooleanCriterium("Child can communicate with friends with signs", True, 18))
+        self.normCriteria.append(BooleanCriterium("Child looks at other children playing", True, 18))
+        self.normCriteria.append(BooleanCriterium("Child defends own toys", True, 18))
+        self.normCriteria.append(BooleanCriterium("Child helps with simple domestic work", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child plays with dolls", True, 24))
+        self.normCriteria.append(
+            BooleanCriterium("Child plays next to other children and is in contact with them", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child makes choices if asked", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child waits for its own turn", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child listens to music/story for 10min", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child says please if reminded", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child joins with songs/rhymes", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child can say goodbye to parents without crying", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child keeps to the rules of a game under guidance", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child waits for its turn with other children", True, 36))
+        self.normCriteria.append(
+            BooleanCriterium("Child says half of the time please and thankyou without reminder", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child knows own gender and can name it", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child does simple domestic work tasks", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child avoids danger", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child stays within clear rules of parents", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child can share attention of parents", True, 36))
 
 
 class GrossMotorSkillsNorm(Norm):
@@ -141,6 +237,12 @@ class Norms:
 
     def __init__(self):
         pass
+
+    def selectdomain(self):
+        domainlist = ["LanguageProductionNorm", "LanguageComprehensionNorm", "SocialSkillsNorm", "GrossMotorSkillsNorm", "FineMotorSkillsNorm"]
+        for domain in domainlist:
+            yield self.norms[domain]
+
 
     def __repr__(self):
         res = ""

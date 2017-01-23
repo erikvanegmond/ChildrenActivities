@@ -8,7 +8,7 @@ class Assessment:
     def assess_child(self):
         case = self.child.case
         # Loop over the norms
-        for norm_name, norm in self.child.norms.norms.items():
+        for norm in self.child.norms.selectdomain():
             norm.evaluate(case)
 
 
