@@ -61,6 +61,9 @@ class BooleanCriterium(Criterium):
     Can child do x? {}
     """
 
+    true_list = ['true', 'y', '1']
+    false_list = ['false', 'n', '0']
+
     def __init__(self, criterium, boolean, norm_score=None, parent_criterium=None):
         super().__init__(criterium, norm_score, parent_criterium)
         self.boolean = boolean
@@ -74,17 +77,19 @@ class BooleanCriterium(Criterium):
     def ask(self):
         answer = None
         while True:
-            try:
-                answer = bool(input(self.make_question("True/False")))
-                break
-            except ValueError:
+            string_input = str(input(self.make_question("True/False"))).lower()
+            if string_input in self.true_list:
+                answer = True
+            elif string_input in self.false_list:
+                answer = False
+            else:
                 continue
+            break
         if answer == self.boolean and self.parent_criterium is not None:
             for parent in self.parent_criterium:
                 self.case.set_property(parent.criterium, parent.boolean)
 
         return answer
-
 
     def evaluate(self, case_value: object) -> int:
         if case_value == self.boolean:

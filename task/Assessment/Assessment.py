@@ -2,8 +2,11 @@ from child.Child import Child
 
 
 class Assessment:
-    def __init__(self):
-        self.child = Child("Bob")
+    def __init__(self, child=None):
+        if child:
+            self.child = child
+        else:
+            self.child = Child()
 
     def assess_child(self):
         case = self.child.case
@@ -11,7 +14,5 @@ class Assessment:
         for norm in self.child.norms.selectdomain():
             norm.evaluate(case)
 
-
     def select_domain(self):
         pass
-

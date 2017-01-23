@@ -1,6 +1,9 @@
 class Case:
-    def __init__(self):
-        self.case_properties = {}
+    def __init__(self, case_properties=None):
+        if case_properties:
+            self.case_properties = case_properties
+        else:
+            self.case_properties = {}
 
     def __repr__(self):
         res = ""

@@ -3,16 +3,19 @@ from task.Assessment.Norms import Norms
 
 
 class Child:
-    def __init__(self, name=None):
+    def __init__(self, name=None, case=None):
         if name is None:
             self.name = input("Name of the child: ")
         else:
             self.name = name
 
-        self.case = Case()
+        if case:
+            self.case = Case(case_properties=case)
+        else:
+            self.case = Case()
+
         self.norms = Norms()
         self.norms.set_case(self.case)
-
 
     def __repr__(self):
         return "Child({})".format(self.name)
