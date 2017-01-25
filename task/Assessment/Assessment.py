@@ -11,8 +11,6 @@ class Assessment:
     def assess_child(self):
         case = self.child.case
         # Loop over the norms
-        for norm in self.child.norms.selectdomain():
+        for norm in self.child.norms.select_domain():
             norm.evaluate(case)
 
-    def select_domain(self):
-        pass

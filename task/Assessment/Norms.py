@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from task.Assessment.Criteria import *
 
 
@@ -47,9 +49,26 @@ class Norm:
                 # If the score is better than before, override it
                 self.norm_score = max(score, self.norm_score)
 
-    def norm_criteria_prioritizer(self):
-        for i in self.normCriteria:
-            yield i
+    def norm_criteria_prioritizer(self, case=None):
+        if not case:
+            for i in self.normCriteria:
+                yield i
+        else:
+            # too complicated for now. :(
+            age = case.get_property('age')
+            criteria_by_age = defaultdict(list)
+            for criterium in self.normCriteria:
+                criteria_by_age[criterium.norm_score].append(criterium)
+            ages = sorted(list(criteria_by_age.keys()))
+            check_age = min(ages, key=lambda x: abs(x-age))
+            continue_checking = True
+            while continue_checking:
+                criteria = list(criteria_by_age[check_age])
+                while criteria:
+                    yield criteria.pop()
+
+
+
 
 
 # ToDO child prioritizer
@@ -68,9 +87,9 @@ class LanguageProductionNorm(Norm):
         self.normCriteria.append(BooleanCriterium("Child can imitate two-word-sentences {}", True, 18,
                                                   parent_criterium=[BooleanCriterium(
                                                       "Child is a good imitator and repeats words of adults {}", True),
-                                                                    (BooleanCriterium(
-                                                                        "Child can imitate movements and sounds {}",
-                                                                        True))]))
+                                                      (BooleanCriterium(
+                                                          "Child can imitate movements and sounds {}",
+                                                          True))]))
 
         self.normCriteria.append(BooleanCriterium("Child is a good imitator and repeats words of adults {}", True, 15,
                                                   parent_criterium=[
@@ -238,11 +257,11 @@ class Norms:
     def __init__(self):
         pass
 
-    def selectdomain(self):
-        domainlist = ["LanguageProductionNorm", "LanguageComprehensionNorm", "SocialSkillsNorm", "GrossMotorSkillsNorm", "FineMotorSkillsNorm"]
-        for domain in domainlist:
+    def select_domain(self):
+        domain_list = ["LanguageProductionNorm", "LanguageComprehensionNorm", "SocialSkillsNorm",
+                       "GrossMotorSkillsNorm", "FineMotorSkillsNorm"]
+        for domain in domain_list:
             yield self.norms[domain]
-
 
     def __repr__(self):
         res = ""

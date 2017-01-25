@@ -14,6 +14,8 @@ class Child:
         else:
             self.case = Case()
 
+        self.case.set_up()
+
         self.norms = Norms()
         self.norms.set_case(self.case)
 
