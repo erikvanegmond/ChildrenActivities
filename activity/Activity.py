@@ -1,5 +1,4 @@
-class ActivityComponentsCatalog:
-    catalog = {""}
+import random
 
 
 class Activity:
@@ -7,46 +6,168 @@ class Activity:
         self.goal = goal
         self.activityComponents = []
 
+    activity = []
+
+    # configs = [[TakeTurnsActivityComponent(), [ColorNamingActivityComponent(), color_naming_config]]]
+
     def __repr__(self):
         return "Activity({})".format(self.goal)
+
+    def generate(self):
+        if self.goal in ActivityComponentsCatalog.catalog:
+            component_list = ActivityComponentsCatalog.catalog[self.goal]
+            # pick random activity to work on the goal
+            component = random.choice(component_list)
+            activity_config = self.configure_activity_component(component)
+            self.activity.append((component, activity_config))
+
+    def build(self):
+        for component in self.activity:
+            activity_component = component[0]
+            config = component[1]
+            activity_component_applied = activity_component().apply_config(config)
+            print("::{}".format(activity_component_applied))
+
+    def configure_activity_component(self, activity_component):
+        needs = activity_component.needs
+        for need in needs:
+            activity_config = {}
+            if type(need) is str:
+                config = self.pull_from_object_catalog([need])
+                return config
+            elif type(need) is list:
+                pass
+            elif type(need) is tuple:
+                name = need[0]
+                the_need = need[1]
+                activity_component_config = self.parse_list_needs_to_config(the_need)
+                activity_config[name] = activity_component_config
+            else:
+                activity_component = need()
+        return activity_config
+
+    def parse_list_needs_to_config(self, the_need):
+        picked_need = random.choice(the_need)
+        activity_component = picked_need()
+        activity_component_config = self.pull_from_object_catalog(activity_component.needs)
+        activity_component_config['class'] = picked_need
+        return activity_component_config
+
+    @staticmethod
+    def pull_from_object_catalog(needs):
+        config = None
+        while config is None:
+            config = random.choice(ObjectCatalog.catalog)
+            for need in needs:
+                if need not in config:
+                    config = None
+                    break
+        return config
+
+
+class ActivityComponentConfig:
+    config = {}
+
+    def __init__(self, **kwargs):
+        self.config = {k: v for k, v in kwargs.items()}
+
+    def __repr__(self):
+        return "Activity({})".format(self.config)
 
 
 class ActivityComponent:
     template = ""
-    configs = []
+    needs = []
 
     def print_components(self):
         for config in self.configs:
             print(self.template.format(**config))
 
-    pass
+    def generate(self):
+        conf = random.choice(self.configs)
+        return self.template.format(**conf)
+
+    def iterate_configs(self):
+        for config in self.configs:
+            yield self.template.format(**config)
+
+    def apply_config(self, config={}):
+        if 'activity_config' in config:
+            activity_config = config['activity_config']
+            if 'class' in activity_config:
+                activity_component = activity_config['class']()
+                config['activity_config'] = activity_component.apply_config(config=activity_config)
+        return self.template.format(**config)
+
+    def __repr__(self):
+        return "ActivityComponent(\"{}\")".format(self.template)
+
+
+class ColorNamingActivityComponent(ActivityComponent):
+    template = "name the color of the {object}"
+    needs = ["object"]
+    configs = [
+        {"object": "cloth"},
+        {"object": "car"},
+        {"object": "block"},
+        {"object": "clothing"},
+        {"object": "puzzle piece"},
+        {"object": "thing around you"},
+    ]
 
 
 class BuildActivityComponent(ActivityComponent):
-    template = """Start {activity} a {activity_result} by {goal} to add a {object} to the {activity_result}. """
+    needs = ['activity', 'activity_result', 'object']
+    template = """{activity} a {activity_result} by adding a {object} to the {activity_result}. """
+
+
+class BuildActivityComponentConfig(ActivityComponentConfig):
     configs = [
         {
             "object": "blocks",
-            "activity": "building",
-            "goal": "taking turns",
+            "activity": "build",
             "activity_result": "tower"
         }, {
             "object": "train tracks pieces",
-            "activity": "building",
-            "goal": "taking turns",
+            "activity": "build",
             "activity_result": "train track"
         }, {
             "object": "dot",
-            "activity": "drawing",
-            "goal": "taking turns",
+            "activity": "draw",
             "activity_result": "group of dots"
-        }, {
-            "object": "animals",
-            "activity": "naming",
-            "goal": "taking turns",
-            "activity_result": "animals"
         }
     ]
+
+    def __init__(self):
+        self.config = random.choice(self.configs)
+
+
+class TakeTurnsActivityComponent(ActivityComponent):
+    template = "take turns, child do {activity_config}, you do {activity_config}"
+    needs = [('activity_config', [ColorNamingActivityComponent, BuildActivityComponent])]
+
+    # build_activity = BuildActivityComponent()
+    # color_naming_activity = ColorNamingActivityComponent()
+    # configs = [{'activity': config} for config in build_activity.iterate_configs()]
+    # configs += [{'activity': config} for config in color_naming_activity.iterate_configs()]
+
+
+class ActivityComponentsCatalog:
+    catalog = {"language production": [TakeTurnsActivityComponent, ColorNamingActivityComponent],
+               "social skills": [TakeTurnsActivityComponent],
+               "taking turns": [TakeTurnsActivityComponent],
+               "colors": [ColorNamingActivityComponent]}
+
+class ObjectCatalog:
+    catalog = [
+        {"object": "cloth"},
+        {"object": "car"},
+        {"object": "block", "activity": "build", "activity_result": "towers"},
+        {"object": "clothing"},
+        {"object": "puzzle piece"},
+        {"object": "thing around you"},
+    ]
+
 
 """
 * Color naming
@@ -60,5 +181,7 @@ class BuildActivityComponent(ActivityComponent):
 """
 
 
-b_activity = BuildActivityComponent()
-b_activity.print_components()
+act = Activity(goal="language production")
+for _ in range(20):
+    act.generate()
+    act.build()
