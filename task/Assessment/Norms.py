@@ -157,11 +157,11 @@ class LanguageProductionNorm(Norm):
         self.normCriteria.append(BooleanCriterium("Child can imitate two-word-sentences {}", True, 18))
         self.normCriteria.append(
             BooleanCriterium("Child's speech is understandable for at least 2/3 of time {}", True, 18))
-        self.normCriteria.append(BooleanCriterium("Child can use 3 word-sentences {}", True, 34))
+        self.normCriteria.append(BooleanCriterium("Child can use 3 word-sentences {}", True, 24))
         self.normCriteria.append(BooleanCriterium("Child takes turn in conversations {}", True, 24))
         self.normCriteria.append(BooleanCriterium("Child starts to understand basic grammar {}", True, 24))
         self.normCriteria.append(BooleanCriterium("Child can say a child rhyme{}", True, 24))
-        self.normCriteria.append(BooleanCriterium("Child asks w'questions like where, what {}", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child asks w'questions like where, what {}", True, 30))
         self.normCriteria.append(BooleanCriterium("Child can talk about experiences {}", True, 36))
         self.normCriteria.append(BooleanCriterium("Child can say its full name {}", True, 36))
         self.normCriteria.append(BooleanCriterium("Child can answer many questions{}", True, 36))
@@ -170,7 +170,6 @@ class LanguageProductionNorm(Norm):
         self.normCriteria.append(BooleanCriterium("Child can repeat a 6 word sentence {}", True, 36))
         self.normCriteria.append(BooleanCriterium("Child uses adult-like intonation {}", True, 36))
 
-# TODO checken age-norms attention
 
 class LanguageComprehensionNorm(Norm):
     def __init__(self):
@@ -178,16 +177,18 @@ class LanguageComprehensionNorm(Norm):
 
         self.normCriteria.append(BooleanCriterium("Child reacts at noise {}", True, 1))
         self.normCriteria.append(BooleanCriterium("Child looks at face for a while {}", True, 1))
-        self.normCriteria.append(BooleanCriterium("Child had interest in surrounding{}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child had interest in surrounding{}", True, 2))
         self.normCriteria.append(BooleanCriterium("Child searches with eyes where sound is coming from {}", True, 3))
-        self.normCriteria.append(BooleanCriterium("Child turns in movement of sound/voice", True, 6))
-        self.normCriteria.append(BooleanCriterium("Child sits quiet in chair and has attention for object", True, 6))
-        self.normCriteria.append(BooleanCriterium("Child can look at image for 2 minutes", True, 9))
-        self.normCriteria.append(BooleanCriterium("Child changes facial expression in reaction to mad/friendly voices", True, 12))
-        self.normCriteria.append(BooleanCriterium("Child listens to 1 talking person in noisy environment", True, 15))
-        self.normCriteria.append(BooleanCriterium("Child listens to short story ", True, 18))
-        self.normCriteria.append(BooleanCriterium("Child listens to 10-min story", True, 24))
-        self.normCriteria.append(BooleanCriterium("Child answers during story simple questions", True, 36))
+        self.normCriteria.append(BooleanCriterium("Child turns in movement of sound/voice {}", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child sits quiet in chair and has attention for object {}", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child can look at image for 2 minutes {}", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child changes facial expression in reaction to mad/friendly voices {}", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child listens to 1 talking person in noisy environment {}", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child reacts to own name {}", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child can point to specific object {}", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child listens to short story {}", True, 18))
+        self.normCriteria.append(BooleanCriterium("Child listens to 10-min story {}", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child answers during story simple questions {}", True, 36))
 
 class SocialSkillsNorm(Norm):
     def __init__(self):
