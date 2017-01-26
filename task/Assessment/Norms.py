@@ -68,9 +68,6 @@ class Norm:
                     yield criteria.pop()
 
 
-
-
-
 # ToDO child prioritizer
 # TODO after 4x False stop questions
 
@@ -173,11 +170,24 @@ class LanguageProductionNorm(Norm):
         self.normCriteria.append(BooleanCriterium("Child can repeat a 6 word sentence {}", True, 36))
         self.normCriteria.append(BooleanCriterium("Child uses adult-like intonation {}", True, 36))
 
+# TODO checken age-norms attention
 
 class LanguageComprehensionNorm(Norm):
     def __init__(self):
         super().__init__()
 
+        self.normCriteria.append(BooleanCriterium("Child reacts at noise}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child looks at face for a while {}", True, 1))
+        self.normCriteria.append(BooleanCriterium("Child had interest in surrounding{}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child searches with eyes where sound is coming from {}", True, 3))
+        self.normCriteria.append(BooleanCriterium("Child turns in movement of sound/voice", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child sits quiet in chair and has attention for object", True, 6))
+        self.normCriteria.append(BooleanCriterium("Child can look at image for 2 minutes", True, 9))
+        self.normCriteria.append(BooleanCriterium("Child changes facial expression in reaction to mad/friendly voices", True, 12))
+        self.normCriteria.append(BooleanCriterium("Child listens to 1 talking person in noisy environment", True, 15))
+        self.normCriteria.append(BooleanCriterium("Child listens to short story ", True, 18))
+        self.normCriteria.append(BooleanCriterium("Child listens to 10-min story", True, 24))
+        self.normCriteria.append(BooleanCriterium("Child answers during story simple questions", True, 36))
 
 class SocialSkillsNorm(Norm):
     def __init__(self):
