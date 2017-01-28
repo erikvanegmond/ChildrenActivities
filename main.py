@@ -22,7 +22,7 @@ def run():
         assessment = Assessment()
     print(assessment.child)
     assessment.assess_child()
-    print(assessment.child)
+    assessment.decide_focus_norm()
 
 
 if __name__ == '__main__':
