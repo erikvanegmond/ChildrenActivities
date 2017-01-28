@@ -1,14 +1,32 @@
 import random
 
 
-class Activity:
-    def __init__(self, goal=None):
+class ActivityPlanner:
+    def __init__(self, goal=None, assessed_age=0):
         self.goal = goal
         self.activityComponents = []
+        self.age = assessed_age
+        self.batch_number = 10
 
-    activity = []
+    def run(self):
+        activities = []
+        for _ in range(self.batch_number):
+            act = Activity(goal=self.goal, assessed_age=self.age)
+            act.generate()
+            act.build()
+            print(act.activity)
+            activities.append(act)
+        # for a in activities:
+        #     # print(a.activity)
+        #
 
-    # configs = [[TakeTurnsActivityComponent(), [ColorNamingActivityComponent(), color_naming_config]]]
+class Activity:
+
+    def __init__(self, goal=None, assessed_age=0):
+        self.activity = []
+        self.goal = goal
+        self.activityComponents = []
+        self.age = assessed_age
 
     def __repr__(self):
         return "Activity({})".format(self.goal)
@@ -65,16 +83,6 @@ class Activity:
         return config
 
 
-class ActivityComponentConfig:
-    config = {}
-
-    def __init__(self, **kwargs):
-        self.config = {k: v for k, v in kwargs.items()}
-
-    def __repr__(self):
-        return "Activity({})".format(self.config)
-
-
 class ActivityComponent:
     template = ""
     needs = []
@@ -121,42 +129,17 @@ class BuildActivityComponent(ActivityComponent):
     template = """{activity} a {activity_result} by adding a {object} to the {activity_result}. """
 
 
-class BuildActivityComponentConfig(ActivityComponentConfig):
-    configs = [
-        {
-            "object": "blocks",
-            "activity": "build",
-            "activity_result": "tower"
-        }, {
-            "object": "train tracks pieces",
-            "activity": "build",
-            "activity_result": "train track"
-        }, {
-            "object": "dot",
-            "activity": "draw",
-            "activity_result": "group of dots"
-        }
-    ]
-
-    def __init__(self):
-        self.config = random.choice(self.configs)
-
-
 class TakeTurnsActivityComponent(ActivityComponent):
     template = "take turns, child do {activity_config}, you do {activity_config}"
     needs = [('activity_config', [ColorNamingActivityComponent, BuildActivityComponent])]
 
-    # build_activity = BuildActivityComponent()
-    # color_naming_activity = ColorNamingActivityComponent()
-    # configs = [{'activity': config} for config in build_activity.iterate_configs()]
-    # configs += [{'activity': config} for config in color_naming_activity.iterate_configs()]
-
 
 class ActivityComponentsCatalog:
-    catalog = {"language production": [TakeTurnsActivityComponent, ColorNamingActivityComponent],
-               "social skills": [TakeTurnsActivityComponent],
+    catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent],
+               "SocialSkillsNorm": [TakeTurnsActivityComponent],
                "taking turns": [TakeTurnsActivityComponent],
                "colors": [ColorNamingActivityComponent]}
+
 
 class ObjectCatalog:
     catalog = [
@@ -179,9 +162,3 @@ class ObjectCatalog:
 * reading
 * take turns eating
 """
-
-
-act = Activity(goal="language production")
-for _ in range(20):
-    act.generate()
-    act.build()

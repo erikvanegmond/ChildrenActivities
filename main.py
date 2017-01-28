@@ -1,3 +1,4 @@
+from activity.Activity import Activity, ActivityPlanner
 from task.Assessment.Assessment import Assessment
 from child.examples import example_child
 import argparse
@@ -6,23 +7,27 @@ import argparse
 def run():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--example', action='store_true')
+    parser.add_argument('-child', choices=["Bob", "Lisa"])
     args = parser.parse_args()
 
     if args.example:
-        print('example time!')
-
-        example = None
-        while example is None:
-            child = input("What example child do you want?")
-            example = example_child(child)
+        if args.child:
+            example = example_child(args.child)
+        else:
+            example = None
+            while example is None:
+                child = input("What example child do you want?")
+                example = example_child(child)
 
         assessment = Assessment(child=example)
     else:
-        print("just do it yourself!")
         assessment = Assessment()
-    print(assessment.child)
     assessment.assess_child()
-    assessment.decide_focus_norm()
+    focus = assessment.decide_focus_norm()
+    print(assessment.child)
+    print("{} needs to focus on {}".format(assessment.child.name, focus[1]))
+    act = ActivityPlanner(goal=focus[1], assessed_age=focus[0])
+    act.run()
 
 
 if __name__ == '__main__':

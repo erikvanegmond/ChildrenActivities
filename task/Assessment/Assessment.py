@@ -19,7 +19,6 @@ class Assessment:
         for norm in self.child.norms.norms:
 
             score = self.child.norms.norms[norm].norm_score
-            print(score)
             if focus[0] is None or focus[0] > score:
                 focus = (score, norm)
         return focus

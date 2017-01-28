@@ -21,10 +21,6 @@ class Norm:
             criterium_str = criterium.criterium
 
             if criterium.parent_criterium is not None:
-                # for parent in criterium.parent_criterium:
-                #     if parent.criterium is criterium_str:
-                #         print("hi")
-
                 new_case_properties = {}
                 for case_prop in case.case_properties.keys():
                     if case_prop is criterium_str:
