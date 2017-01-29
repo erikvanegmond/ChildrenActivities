@@ -166,6 +166,10 @@ class ColorNamingActivityComponent(ActivityComponent):
     template = "name the color of the {object}"
     needs = ["object"]
 
+class DescribingObjectActivityComponent(ActivityComponent):
+    template = "describe the following {object}"
+    needs = ["object"]
+
 
 class BuildActivityComponent(ActivityComponent):
     needs = ['activity', 'activity_result', 'object']
@@ -185,18 +189,36 @@ class TakeTurnsActivityComponent(ActivityComponent):
         VerbNounActivityComponent
     ])]
 
+class HideAndSeekActivityComponent (ActivityComponent):
+    needs = ['object', 'no_result']
+    template = "play hide and seek with {object}"
 
-class FixedActivityComponent(ActivityComponent):
-    template = "this is fixed"
-    needs = []
-    constraints = {"min_age": 24}
+class FixedSocialskillsActivityComponent(ActivityComponent):
+    template = "{fixed_sentence_social}"
+    needs = ["fixed_sentence_social"]
+
+class FixedLanguageComprehensionskillsActivityComponent(ActivityComponent):
+    template = "{fixed_sentence_language_comprehension}"
+    needs = ["fixed_sentence_language_comprehension"]
+
+class FixedLanguageProductionActivityComponent(ActivityComponent):
+    template = "{fixed_sentence_language_production}"
+    needs = ["fixed_sentence_language_production"]
+
+class FixedGrossMotorActivityLComponent(ActivityComponent):
+    template = "{fixed_sentence_gross_motor}"
+    needs = ["fixed_sentence_gross_motor"]
+
+class FixedFineMotorActivityLComponent(ActivityComponent):
+    template = "{fixed_sentence_fine_motor}"
+    needs = ["fixed_sentence_fine_motor"]
 
 class ActivityComponentsCatalog:
-    catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent],
-               "SocialSkillsNorm": [
-                                    TakeTurnsActivityComponent,
-                                    FixedActivityComponent,
-                                    ColorNamingActivityComponent]
+    catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent, DescribingObjectActivityComponent],
+               "SocialSkillsNorm": [TakeTurnsActivityComponent, FixedSocialskillsActivityComponent, HideAndSeekActivityComponent],
+               "LanguageComprehensionNorm": [FixedLanguageComprehensionskillsActivityComponent,DescribingObjectActivityComponent],
+               "FineMotorSkillsNorm": [FixedFineMotorActivityLComponent],
+               "GrossMotorSkillsNorm": [FixedGrossMotorActivityLComponent]
                }
 
 
@@ -215,6 +237,14 @@ class ObjectCatalog:
         {"object": "clothing"},
         {"object": "puzzle piece"},
         {"object": "thing around you"},
+        {"fixed_sentence_social": "do domestic work activities together", 'min_age':18},
+        {"fixed_sentence_social": "practice saying please & thankyou", 'min_age':30},
+        {"fixed_sentence_social": "ask child to choose from variety of toys",'min_age':18},
+        {"fixed_sentence_social": "play kiekeboe",'max_age':24},
+        {"fixed_sentence_social": "smile and laugh to your child ",'max_age':12},
+        {"fixed_sentence_language_comprehension":"talk about everything you do, 'subtitle'"},
+        {"fixed_sentence_language_comprehension":"show different objects to child and talk about it, 'subtitle'"},
+
     ]
 
 
