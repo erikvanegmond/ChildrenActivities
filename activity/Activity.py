@@ -7,10 +7,21 @@ class ActivityPlanner:
         self.activityComponents = []
         self.batch_number = 20
 
-        self.requirements = {
-            'location': {'value': 'inside', 'soft-hard': "soft", 'type': str},
-            'age': {'value': assessed_age, 'soft-hard': "hard", 'type': int}
-        }
+        self.requirements = [
+            ['location', {'value': 'inside', 'soft-hard': "hard", 'type': str}],
+            ['object', {'value': 'car', 'soft-hard': "soft", 'type': str}],
+            ['object', {'value': 'block', 'soft-hard': "soft", 'type': str}],
+            ['age', {'value': assessed_age, 'soft-hard': "hard", 'type': int}]
+        ]
+
+        # self.ask_requirements()
+
+    def ask_requirements(self):
+        object_ = ""
+        while object_ != "stop":
+            object_ = input("Object requirement?")
+            soft_hard = input("soft or hard requirement?")
+            self.requirements.append(['object', {'value': object_, 'soft-hard': soft_hard, 'type': str}])
 
     def run(self):
         activities = []
@@ -21,52 +32,77 @@ class ActivityPlanner:
             activities.append(act)
 
         activities = self.select_subset(activities)
-        acts = [[act, self.count_soft_violations(act)] for act in activities]
         activities = sorted(activities, key=lambda x: self.count_soft_violations(x))
-        build_activities = []
+
+        self.propose(activities)
+
+    # @staticmethod
+    def propose(self, activities):
+        seen = set()
+        seen_add = seen.add
         for activity in activities:
-            build_activities.append(activity.build())
-
-        def filter_unique(seq):
-                seen = set()
-                seen_add = seen.add
-                return [x for x in seq if not (x in seen or seen_add(x))]
-        self.propose(filter_unique(build_activities))
-
-    @staticmethod
-    def propose(build_activities):
-        for activity in build_activities:
-            print(activity)
+            build_str = activity.build()
+            if build_str not in seen:
+                seen_add(build_str)
+                print(build_str)
 
     def check_component(self, component_config, check_soft_hard=True):
-        def check_constraint(constraint, constraint_value, self, check_soft_hard = True):
-
-            for requirement, value in self.requirements.items():
+        def check_constraint(constraint, constraint_value, self, check_soft_hard=True):
+            violations = 0
+            for [requirement, value] in self.requirements:
                 if not check_soft_hard or value['soft-hard'] == 'hard':
                     if value['type'] == str and \
                                     requirement == constraint and constraint_value != value['value']:
-                        return False
+                        if check_soft_hard:
+                            return False
+                        else:
+                            violations += 1
                     if value['type'] == int and (
-                            constraint in ["min_age", "max_age"] and requirement == "age"):
+                                    constraint in ["min_age", "max_age"] and requirement == "age"):
                         if constraint == "min_age" and constraint_value > value['value']:
-                            return False
+                            if check_soft_hard:
+                                return False
+                            else:
+                                violations += 1
                         if constraint == "max_age" and constraint_value < value['value']:
-                            return False
-            return True
+                            if check_soft_hard:
+                                return False
+                            else:
+                                violations += 1
+            if check_soft_hard:
+                return True
+            else:
+                return violations
 
+        violations = 0
         for key, value in component_config.items():
             if type(value) is dict:
-                return self.check_component(value)
+                res = self.check_component(value, check_soft_hard=check_soft_hard)
+                if check_soft_hard:
+                    if not res:
+                        return res
+                else:
+                    violations += res
             else:
-                # print(key, value)
                 if key == "class":
                     for constraint, constraint_value in value.properties.items():
                         res = check_constraint(constraint, constraint_value, self, check_soft_hard)
-                        if not res:
-                            return False
+                        if check_soft_hard:
+                            if not res:
+                                return res
+                        else:
+                            violations += res
                 else:
-                    return check_constraint(key, value, self, check_soft_hard)
-        return True
+                    res = check_constraint(key, value, self, check_soft_hard)
+                    if check_soft_hard:
+                        if not res:
+                            return res
+                    else:
+                        violations += res
+        if check_soft_hard:
+            return True
+        else:
+            return violations
 
     def select_subset(self, activities):
         subset = []
@@ -87,12 +123,11 @@ class ActivityPlanner:
         return subset
 
     def count_soft_violations(self, activity):
+        # print(activity.activity)
         violations = 0
         for component in activity.activity:
-            if not self.check_component(component[1]):
-                violations += 1
-            if not self.check_component(component[0].properties, check_soft_hard=False):
-                violations += 1
+            violations += self.check_component(component[1], check_soft_hard=False)
+            violations += self.check_component(component[0].properties, check_soft_hard=False)
         return violations
 
 
@@ -215,10 +250,10 @@ class TakeTurnsActivityComponent(ActivityComponent):
     ])]
 
 
+
 class HideAndSeekActivityComponent(ActivityComponent):
     needs = ['object', 'no_result']
     template = "play hide and seek with {object}"
-    properties = {'location': 'outside'}
 
 
 class FixedSocialskillsActivityComponent(ActivityComponent):
@@ -249,8 +284,10 @@ class FixedFineMotorActivityLComponent(ActivityComponent):
 class ActivityComponentsCatalog:
     catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent,
                                           DescribingObjectActivityComponent],
-               "SocialSkillsNorm": [TakeTurnsActivityComponent, FixedSocialskillsActivityComponent,
-                                    HideAndSeekActivityComponent],
+               "SocialSkillsNorm": [TakeTurnsActivityComponent,
+                                    # FixedSocialskillsActivityComponent,
+                                    # HideAndSeekActivityComponent
+                                    ],
                "LanguageComprehensionNorm": [FixedLanguageComprehensionskillsActivityComponent,
                                              DescribingObjectActivityComponent],
                "FineMotorSkillsNorm": [FixedFineMotorActivityLComponent],
