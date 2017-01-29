@@ -60,7 +60,7 @@ class ActivityPlanner:
             else:
                 # print(key, value)
                 if key == "class":
-                    for constraint, constraint_value in value.constraints.items():
+                    for constraint, constraint_value in value.properties.items():
                         res = check_constraint(constraint, constraint_value, self, check_soft_hard)
                         if not res:
                             return False
@@ -77,7 +77,7 @@ class ActivityPlanner:
                     print("skip", activity.activity)
                     skipped = True
                     break
-                if not self.check_component(component[0].constraints):
+                if not self.check_component(component[0].properties):
                     print("skip", activity.activity)
                     skipped = True
                     break
@@ -91,7 +91,7 @@ class ActivityPlanner:
         for component in activity.activity:
             if not self.check_component(component[1]):
                 violations += 1
-            if not self.check_component(component[0].constraints, check_soft_hard=False):
+            if not self.check_component(component[0].properties, check_soft_hard=False):
                 violations += 1
         return violations
 
@@ -159,7 +159,7 @@ class Activity:
 class ActivityComponent:
     template = ""
     needs = []
-    constraints = {}
+    properties = {}
 
     def print_components(self):
         for config in self.configs:
@@ -218,7 +218,7 @@ class TakeTurnsActivityComponent(ActivityComponent):
 class HideAndSeekActivityComponent(ActivityComponent):
     needs = ['object', 'no_result']
     template = "play hide and seek with {object}"
-    constraints = {'location': 'outside'}
+    properties = {'location': 'outside'}
 
 
 class FixedSocialskillsActivityComponent(ActivityComponent):
