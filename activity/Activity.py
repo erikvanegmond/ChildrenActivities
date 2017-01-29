@@ -5,37 +5,53 @@ class ActivityPlanner:
     def __init__(self, goal=None, assessed_age=0):
         self.goal = goal
         self.activityComponents = []
-        self.age = assessed_age
         self.batch_number = 20
 
-
+        self.requirements = {
+            'location': {'value': 'inside', 'soft-hard': "soft", 'type': str},
+            'age': {'value': assessed_age, 'soft-hard': "hard", 'type': int}
+        }
 
     def run(self):
         activities = []
         for _ in range(self.batch_number):
-            act = Activity(goal=self.goal, assessed_age=self.age)
+            act = Activity(goal=self.goal)
             act.generate()
 
             activities.append(act)
 
         activities = self.select_subset(activities)
-
+        acts = [[act, self.count_soft_violations(act)] for act in activities]
+        activities = sorted(activities, key=lambda x: self.count_soft_violations(x))
         build_activities = []
         for activity in activities:
             build_activities.append(activity.build())
-        self.propose(set(build_activities))
+
+        def filter_unique(seq):
+                seen = set()
+                seen_add = seen.add
+                return [x for x in seq if not (x in seen or seen_add(x))]
+        self.propose(filter_unique(build_activities))
 
     @staticmethod
     def propose(build_activities):
         for activity in build_activities:
             print(activity)
 
-    def check_component(self, component_config):
-        def check_constraint(constraint, constraint_value, self):
-            if constraint == "min_age" and constraint_value > self.age:
-                return False
-            if constraint == "max_age" and constraint_value < self.age:
-                return False
+    def check_component(self, component_config, check_soft_hard=True):
+        def check_constraint(constraint, constraint_value, self, check_soft_hard = True):
+
+            for requirement, value in self.requirements.items():
+                if not check_soft_hard or value['soft-hard'] == 'hard':
+                    if value['type'] == str and \
+                                    requirement == constraint and constraint_value != value['value']:
+                        return False
+                    if value['type'] == int and (
+                            constraint in ["min_age", "max_age"] and requirement == "age"):
+                        if constraint == "min_age" and constraint_value > value['value']:
+                            return False
+                        if constraint == "max_age" and constraint_value < value['value']:
+                            return False
             return True
 
         for key, value in component_config.items():
@@ -45,11 +61,11 @@ class ActivityPlanner:
                 # print(key, value)
                 if key == "class":
                     for constraint, constraint_value in value.constraints.items():
-                        res = check_constraint(constraint, constraint_value, self)
+                        res = check_constraint(constraint, constraint_value, self, check_soft_hard)
                         if not res:
                             return False
                 else:
-                    return check_constraint(key, value, self)
+                    return check_constraint(key, value, self, check_soft_hard)
         return True
 
     def select_subset(self, activities):
@@ -70,13 +86,21 @@ class ActivityPlanner:
                 skipped = False
         return subset
 
+    def count_soft_violations(self, activity):
+        violations = 0
+        for component in activity.activity:
+            if not self.check_component(component[1]):
+                violations += 1
+            if not self.check_component(component[0].constraints, check_soft_hard=False):
+                violations += 1
+        return violations
+
 
 class Activity:
-    def __init__(self, goal=None, assessed_age=0):
+    def __init__(self, goal=None):
         self.activity = []
         self.goal = goal
         self.activityComponents = []
-        self.age = assessed_age
 
     def __repr__(self):
         return "Activity({})".format(self.goal)
@@ -166,6 +190,7 @@ class ColorNamingActivityComponent(ActivityComponent):
     template = "name the color of the {object}"
     needs = ["object"]
 
+
 class DescribingObjectActivityComponent(ActivityComponent):
     template = "describe the following {object}"
     needs = ["object"]
@@ -189,34 +214,45 @@ class TakeTurnsActivityComponent(ActivityComponent):
         VerbNounActivityComponent
     ])]
 
-class HideAndSeekActivityComponent (ActivityComponent):
+
+class HideAndSeekActivityComponent(ActivityComponent):
     needs = ['object', 'no_result']
     template = "play hide and seek with {object}"
+    constraints = {'location': 'outside'}
+
 
 class FixedSocialskillsActivityComponent(ActivityComponent):
     template = "{fixed_sentence_social}"
     needs = ["fixed_sentence_social"]
 
+
 class FixedLanguageComprehensionskillsActivityComponent(ActivityComponent):
     template = "{fixed_sentence_language_comprehension}"
     needs = ["fixed_sentence_language_comprehension"]
+
 
 class FixedLanguageProductionActivityComponent(ActivityComponent):
     template = "{fixed_sentence_language_production}"
     needs = ["fixed_sentence_language_production"]
 
+
 class FixedGrossMotorActivityLComponent(ActivityComponent):
     template = "{fixed_sentence_gross_motor}"
     needs = ["fixed_sentence_gross_motor"]
+
 
 class FixedFineMotorActivityLComponent(ActivityComponent):
     template = "{fixed_sentence_fine_motor}"
     needs = ["fixed_sentence_fine_motor"]
 
+
 class ActivityComponentsCatalog:
-    catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent, DescribingObjectActivityComponent],
-               "SocialSkillsNorm": [TakeTurnsActivityComponent, FixedSocialskillsActivityComponent, HideAndSeekActivityComponent],
-               "LanguageComprehensionNorm": [FixedLanguageComprehensionskillsActivityComponent,DescribingObjectActivityComponent],
+    catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent,
+                                          DescribingObjectActivityComponent],
+               "SocialSkillsNorm": [TakeTurnsActivityComponent, FixedSocialskillsActivityComponent,
+                                    HideAndSeekActivityComponent],
+               "LanguageComprehensionNorm": [FixedLanguageComprehensionskillsActivityComponent,
+                                             DescribingObjectActivityComponent],
                "FineMotorSkillsNorm": [FixedFineMotorActivityLComponent],
                "GrossMotorSkillsNorm": [FixedGrossMotorActivityLComponent]
                }
@@ -227,7 +263,7 @@ class ObjectCatalog:
         {"object": "cloth", "activity": "drop", "no_result": True, 'max_age': 18},
         {"object": "car", "activity": "drop", "no_result": True},
         {"object": "block", "activity": "build", "activity_result": "towers"},
-        {"object": "train track", "activity": "build", "activity_result": "train track", 'min_age':24},
+        {"object": "train track", "activity": "build", "activity_result": "train track", 'min_age': 24},
         {"object": "block", "activity": "drop", "no_result": True, 'max_age': 18},
         {"object": "daddy", "activity": "tickle", "no_result": True, 'max_age': 24},
         {"object": "sand", "activity": "hit", "no_result": True, 'location': 'outside', 'max_age': 18},
@@ -237,13 +273,13 @@ class ObjectCatalog:
         {"object": "clothing"},
         {"object": "puzzle piece"},
         {"object": "thing around you"},
-        {"fixed_sentence_social": "do domestic work activities together", 'min_age':18},
-        {"fixed_sentence_social": "practice saying please & thankyou", 'min_age':30},
-        {"fixed_sentence_social": "ask child to choose from variety of toys",'min_age':18},
-        {"fixed_sentence_social": "play kiekeboe",'max_age':24},
-        {"fixed_sentence_social": "smile and laugh to your child ",'max_age':12},
-        {"fixed_sentence_language_comprehension":"talk about everything you do, 'subtitle'"},
-        {"fixed_sentence_language_comprehension":"show different objects to child and talk about it, 'subtitle'"},
+        {"fixed_sentence_social": "do domestic work activities together", 'min_age': 18},
+        {"fixed_sentence_social": "practice saying please & thankyou", 'min_age': 30},
+        {"fixed_sentence_social": "ask child to choose from variety of toys", 'min_age': 18},
+        {"fixed_sentence_social": "play kiekeboe", 'max_age': 24},
+        {"fixed_sentence_social": "smile and laugh to your child ", 'max_age': 12},
+        {"fixed_sentence_language_comprehension": "talk about everything you do, 'subtitle'"},
+        {"fixed_sentence_language_comprehension": "show different objects to child and talk about it, 'subtitle'"},
 
     ]
 
