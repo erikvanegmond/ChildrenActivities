@@ -10,18 +10,22 @@ class ActivityPlanner:
 
     def run(self):
         activities = []
+        build_activities = []
         for _ in range(self.batch_number):
             act = Activity(goal=self.goal, assessed_age=self.age)
             act.generate()
-            act.build()
-            print(act.activity)
+
             activities.append(act)
-        # for a in activities:
-        #     # print(a.activity)
-        #
+            build_activities.append(act.build())
+        self.propose(set(build_activities))
+
+    @staticmethod
+    def propose(build_activities):
+        for activity in build_activities:
+            print(activity)
+
 
 class Activity:
-
     def __init__(self, goal=None, assessed_age=0):
         self.activity = []
         self.goal = goal
@@ -44,17 +48,16 @@ class Activity:
             activity_component = component[0]
             config = component[1]
             activity_component_applied = activity_component().apply_config(config)
-            print("::{}".format(activity_component_applied))
+            return "{}".format(activity_component_applied)
 
     def configure_activity_component(self, activity_component):
         needs = activity_component.needs
+        activity_config = {}
         for need in needs:
             activity_config = {}
             if type(need) is str:
                 config = self.pull_from_object_catalog([need])
                 return config
-            elif type(need) is list:
-                pass
             elif type(need) is tuple:
                 name = need[0]
                 the_need = need[1]
@@ -102,6 +105,7 @@ class ActivityComponent:
     def apply_config(self, config={}):
         if 'activity_config' in config:
             activity_config = config['activity_config']
+            config['activity_config_settings'] = config['activity_config']
             if 'class' in activity_config:
                 activity_component = activity_config['class']()
                 config['activity_config'] = activity_component.apply_config(config=activity_config)
@@ -114,38 +118,49 @@ class ActivityComponent:
 class ColorNamingActivityComponent(ActivityComponent):
     template = "name the color of the {object}"
     needs = ["object"]
-    configs = [
-        {"object": "cloth"},
-        {"object": "car"},
-        {"object": "block"},
-        {"object": "clothing"},
-        {"object": "puzzle piece"},
-        {"object": "thing around you"},
-    ]
 
 
 class BuildActivityComponent(ActivityComponent):
     needs = ['activity', 'activity_result', 'object']
-    template = """{activity} a {activity_result} by adding a {object} to the {activity_result}. """
+    template = "{activity} a {activity_result} by adding a {object} to the {activity_result}"
+
+
+class VerbNounActivityComponent(ActivityComponent):
+    needs = ['object', 'no_result', 'activity']
+    template = "{activity} the {object}"
 
 
 class TakeTurnsActivityComponent(ActivityComponent):
     template = "take turns, child do {activity_config}, you do {activity_config}"
-    needs = [('activity_config', [ColorNamingActivityComponent, BuildActivityComponent])]
+    needs = [('activity_config', [
+        ColorNamingActivityComponent,
+        BuildActivityComponent,
+        VerbNounActivityComponent
+    ])]
 
+
+class FixedActivityComponent(ActivityComponent):
+    template = "this is fixed"
+    needs = []
 
 class ActivityComponentsCatalog:
     catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent],
-               "SocialSkillsNorm": [TakeTurnsActivityComponent],
-               "taking turns": [TakeTurnsActivityComponent],
-               "colors": [ColorNamingActivityComponent]}
+               "SocialSkillsNorm": [TakeTurnsActivityComponent, FixedActivityComponent]
+               }
 
 
 class ObjectCatalog:
     catalog = [
-        {"object": "cloth"},
-        {"object": "car"},
+        {"object": "cloth", "activity": "drop", "no_result": True, 'max_age': 18},
+        {"object": "car", "activity": "drop", "no_result": True},
         {"object": "block", "activity": "build", "activity_result": "towers"},
+        {"object": "train track", "activity": "build", "activity_result": "train track", 'min_age':24},
+        {"object": "block", "activity": "drop", "no_result": True, 'max_age': 18},
+        {"object": "daddy", "activity": "tickle", "no_result": True, 'max_age': 24},
+        {"object": "sand", "activity": "hit", "no_result": True, 'location': 'outside', 'max_age': 18},
+        {"object": "door", "activity": "knock", "no_result": True, 'max_age': 18},
+        {"object": "piano", "activity": "play", "no_result": True, 'min_age': 18},
+        {"object": "cace-ix", "activity": "mix", "no_result": True, 'min_age': 18},
         {"object": "clothing"},
         {"object": "puzzle piece"},
         {"object": "thing around you"},
