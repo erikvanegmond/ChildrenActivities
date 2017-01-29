@@ -123,7 +123,6 @@ class ActivityPlanner:
         return subset
 
     def count_soft_violations(self, activity):
-        # print(activity.activity)
         violations = 0
         for component in activity.activity:
             violations += self.check_component(component[1], check_soft_hard=False)
@@ -161,7 +160,7 @@ class Activity:
         for need in needs:
             activity_config = {}
             if type(need) is str:
-                config = self.pull_from_object_catalog([need])
+                config = self.pull_from_object_catalog(needs)
                 return config
             elif type(need) is tuple:
                 name = need[0]
@@ -227,7 +226,7 @@ class ColorNamingActivityComponent(ActivityComponent):
 
 
 class DescribingObjectActivityComponent(ActivityComponent):
-    template = "describe the following {object}"
+    template = "show a {object} and describe {object} together"
     needs = ["object"]
 
 
@@ -240,6 +239,10 @@ class VerbNounActivityComponent(ActivityComponent):
     needs = ['object', 'no_result', 'activity']
     template = "{activity} the {object}"
 
+class GroupingObjectsComponent (ActivityComponent):
+    needs = ['object', 'groupable']
+    template = "group {object} and describe"
+
 
 class TakeTurnsActivityComponent(ActivityComponent):
     template = "take turns, child do {activity_config}, you do {activity_config}"
@@ -248,7 +251,6 @@ class TakeTurnsActivityComponent(ActivityComponent):
         BuildActivityComponent,
         VerbNounActivityComponent
     ])]
-
 
 
 class HideAndSeekActivityComponent(ActivityComponent):
@@ -282,14 +284,14 @@ class FixedFineMotorActivityLComponent(ActivityComponent):
 
 
 class ActivityComponentsCatalog:
-    catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent,
-                                          DescribingObjectActivityComponent],
-               "SocialSkillsNorm": [TakeTurnsActivityComponent,
-                                    # FixedSocialskillsActivityComponent,
-                                    # HideAndSeekActivityComponent
-                                    ],
-               "LanguageComprehensionNorm": [FixedLanguageComprehensionskillsActivityComponent,
-                                             DescribingObjectActivityComponent],
+    catalog = {"LanguageProductionNorm": [
+                                            TakeTurnsActivityComponent,
+                                            ColorNamingActivityComponent,
+                                            DescribingObjectActivityComponent,
+                                            GroupingObjectsComponent
+                                         ],
+               "SocialSkillsNorm": [TakeTurnsActivityComponent, FixedSocialskillsActivityComponent, HideAndSeekActivityComponent],
+               "LanguageComprehensionNorm": [FixedLanguageComprehensionskillsActivityComponent,DescribingObjectActivityComponent],
                "FineMotorSkillsNorm": [FixedFineMotorActivityLComponent],
                "GrossMotorSkillsNorm": [FixedGrossMotorActivityLComponent]
                }
@@ -297,26 +299,40 @@ class ActivityComponentsCatalog:
 
 class ObjectCatalog:
     catalog = [
-        {"object": "cloth", "activity": "drop", "no_result": True, 'max_age': 18},
-        {"object": "car", "activity": "drop", "no_result": True},
-        {"object": "block", "activity": "build", "activity_result": "towers"},
-        {"object": "train track", "activity": "build", "activity_result": "train track", 'min_age': 24},
-        {"object": "block", "activity": "drop", "no_result": True, 'max_age': 18},
+        {"object": "cloth", "activity": "drop", "no_result": True, "groupable": True,'max_age': 18},
+        {"object": "car", "activity": "drop", "no_result": True, "groupable": True},
+        {"object": "block", "activity": "build", "activity_result": "towers", "groupable": True},
+        {"object": "train track", "activity": "build", "activity_result": "train track", "groupable": True, 'min_age':24},
+        {"object": "block", "activity": "drop", "no_result": True, "groupable": True, 'max_age': 18},
         {"object": "daddy", "activity": "tickle", "no_result": True, 'max_age': 24},
         {"object": "sand", "activity": "hit", "no_result": True, 'location': 'outside', 'max_age': 18},
         {"object": "door", "activity": "knock", "no_result": True, 'max_age': 18},
         {"object": "piano", "activity": "play", "no_result": True, 'min_age': 18},
         {"object": "cake-mix", "activity": "mix", "no_result": True, 'min_age': 18},
-        {"object": "clothing"},
-        {"object": "puzzle piece"},
-        {"object": "thing around you"},
-        {"fixed_sentence_social": "do domestic work activities together", 'min_age': 18},
-        {"fixed_sentence_social": "practice saying please & thankyou", 'min_age': 30},
-        {"fixed_sentence_social": "ask child to choose from variety of toys", 'min_age': 18},
-        {"fixed_sentence_social": "play kiekeboe", 'max_age': 24},
-        {"fixed_sentence_social": "smile and laugh to your child ", 'max_age': 12},
-        {"fixed_sentence_language_comprehension": "talk about everything you do, 'subtitle'"},
-        {"fixed_sentence_language_comprehension": "show different objects to child and talk about it, 'subtitle'"},
+        {"object": "doll", "groupable": True, 'max_age': 120},
+        {"object": "clothing", "groupable": True},
+        {"object": "puzzle piece", "groupable": True},
+        {"object": "thing around you", "groupable": True},
+        {"fixed_sentence_social": "do domestic work activities together", 'min_age':18},
+        {"fixed_sentence_social": "practice saying please & thankyou", 'min_age':30},
+        {"fixed_sentence_social": "ask child to choose from variety of toys",'min_age':18},
+        {"fixed_sentence_social": "play kiekeboe",'max_age':24},
+        {"fixed_sentence_social": "smile and laugh to your child ",'max_age':12},
+        {"fixed_sentence_social": "Do the name game with other children ",'min_age':12},
+        {"fixed_sentence_social": "play red light/ green light (annemariakoekoek)",'min_age':24},
+        {"fixed_sentence_social": "talk about emotions in book",'min_age':36},
+        {"fixed_sentence_language_comprehension":"talk about everything you do, 'subtitle'"},
+        {"fixed_sentence_language_comprehension":"pick a book and read together"},
+        {"fixed_sentence_language_comprehension":"Use sign language to illustrate sentences"},
+        {"fixed_sentence_language_comprehension":"imitate doing groceries together", 'min_age': 12},
+        {"fixed_sentence_language_production":"pick a puzzle and ask 'WH' questions", 'min_age':12},
+        {"fixed_sentence_language_production":"practice a simple song together", 'min_age':12},
+        {"fixed_sentence_language_production":"pick an image book and let kid tell the story", 'min_age':12},
+        {"fixed_sentence_language_production":"ask what kind of food child wants", 'min_age':12},
+        {"fixed_sentence_language_production":"imitate doing groceries together", 'min_age':12},
+        {"fixed_sentence_fine_motor":"practice movement child has difficulties with"},
+        {"fixed_sentence_gross_motor":"practice movement child has difficulties with"},
+
 
     ]
 
