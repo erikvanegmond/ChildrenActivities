@@ -6,23 +6,69 @@ class ActivityPlanner:
         self.goal = goal
         self.activityComponents = []
         self.age = assessed_age
-        self.batch_number = 10
+        self.batch_number = 20
+
+
 
     def run(self):
         activities = []
-        build_activities = []
         for _ in range(self.batch_number):
             act = Activity(goal=self.goal, assessed_age=self.age)
             act.generate()
 
             activities.append(act)
-            build_activities.append(act.build())
+
+        activities = self.select_subset(activities)
+
+        build_activities = []
+        for activity in activities:
+            build_activities.append(activity.build())
         self.propose(set(build_activities))
 
     @staticmethod
     def propose(build_activities):
         for activity in build_activities:
             print(activity)
+
+    def check_component(self, component_config):
+        def check_constraint(constraint, constraint_value, self):
+            if constraint == "min_age" and constraint_value > self.age:
+                return False
+            if constraint == "max_age" and constraint_value < self.age:
+                return False
+            return True
+
+        for key, value in component_config.items():
+            if type(value) is dict:
+                return self.check_component(value)
+            else:
+                # print(key, value)
+                if key == "class":
+                    for constraint, constraint_value in value.constraints.items():
+                        res = check_constraint(constraint, constraint_value, self)
+                        if not res:
+                            return False
+                else:
+                    return check_constraint(key, value, self)
+        return True
+
+    def select_subset(self, activities):
+        subset = []
+        for activity in activities:
+            skipped = False
+            for component in activity.activity:
+                if not self.check_component(component[1]):
+                    print("skip", activity.activity)
+                    skipped = True
+                    break
+                if not self.check_component(component[0].constraints):
+                    print("skip", activity.activity)
+                    skipped = True
+                    break
+            if not skipped:
+                subset.append(activity)
+                skipped = False
+        return subset
 
 
 class Activity:
@@ -89,6 +135,7 @@ class Activity:
 class ActivityComponent:
     template = ""
     needs = []
+    constraints = {}
 
     def print_components(self):
         for config in self.configs:
@@ -142,10 +189,14 @@ class TakeTurnsActivityComponent(ActivityComponent):
 class FixedActivityComponent(ActivityComponent):
     template = "this is fixed"
     needs = []
+    constraints = {"min_age": 24}
 
 class ActivityComponentsCatalog:
     catalog = {"LanguageProductionNorm": [TakeTurnsActivityComponent, ColorNamingActivityComponent],
-               "SocialSkillsNorm": [TakeTurnsActivityComponent, FixedActivityComponent]
+               "SocialSkillsNorm": [
+                                    TakeTurnsActivityComponent,
+                                    FixedActivityComponent,
+                                    ColorNamingActivityComponent]
                }
 
 
@@ -160,7 +211,7 @@ class ObjectCatalog:
         {"object": "sand", "activity": "hit", "no_result": True, 'location': 'outside', 'max_age': 18},
         {"object": "door", "activity": "knock", "no_result": True, 'max_age': 18},
         {"object": "piano", "activity": "play", "no_result": True, 'min_age': 18},
-        {"object": "cace-ix", "activity": "mix", "no_result": True, 'min_age': 18},
+        {"object": "cake-mix", "activity": "mix", "no_result": True, 'min_age': 18},
         {"object": "clothing"},
         {"object": "puzzle piece"},
         {"object": "thing around you"},
