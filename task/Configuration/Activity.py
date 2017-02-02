@@ -1,7 +1,7 @@
 import random
 
 
-class ActivityPlanner:
+class ActivityConfiguration:
     def __init__(self, goal=None, assessed_age=0):
         self.goal = goal
         self.activityComponents = []

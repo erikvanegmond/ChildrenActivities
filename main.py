@@ -1,7 +1,8 @@
-from activity.Activity import Activity, ActivityPlanner
-from task.Assessment.Assessment import Assessment
-from child.examples import example_child
 import argparse
+
+from child.examples import example_child
+from task.Assessment.Assessment import Assessment
+from task.Configuration.Activity import ActivityConfiguration
 
 
 def run():
@@ -26,7 +27,7 @@ def run():
     focus = assessment.decide_focus_norm()
     print(assessment.child)
     print("{} needs to focus on {}".format(assessment.child.name, focus[1]))
-    act = ActivityPlanner(goal=focus[1], assessed_age=focus[0])
+    act = ActivityConfiguration(goal=focus[1], assessed_age=focus[0])
     act.run()
 
 
