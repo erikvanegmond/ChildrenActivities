@@ -9,7 +9,7 @@ class ActivityPlanner:
 
         self.requirements = [
             ['age', {'value': assessed_age, 'soft-hard': "hard", 'type': int}],
-            # ['object', {'value': "doll", 'soft-hard':"soft", 'type': str}]
+            #['object', {'value': "doll", 'soft-hard':"soft", 'type': str}]
         ]
 
         self.ask_requirements()
@@ -116,11 +116,11 @@ class ActivityPlanner:
             skipped = False
             for component in activity.activity:
                 if not self.check_component(component[1]):
-                    print("skip", activity.activity)
+                    print("skip1", activity.activity)
                     skipped = True
                     break
                 if not self.check_component(component[0].properties):
-                    print("skip", activity.activity)
+                    print("skip2", activity.activity)
                     skipped = True
                     break
             if not skipped:
@@ -294,9 +294,11 @@ class ActivityComponentsCatalog:
         TakeTurnsActivityComponent,
         ColorNamingActivityComponent,
         DescribingObjectActivityComponent,
-        GroupingObjectsComponent
+        GroupingObjectsComponent,
+        FixedLanguageProductionActivityComponent
     ],
-        "SocialSkillsNorm": [TakeTurnsActivityComponent,
+        "SocialSkillsNorm": [
+                             TakeTurnsActivityComponent,
                              FixedSocialskillsActivityComponent,
                              HideAndSeekActivityComponent
                              ],
@@ -311,6 +313,7 @@ class ObjectCatalog:
     catalog = [
         {"object": "cloth", "activity": "drop", "no_result": True, "groupable": True, 'max_age': 18},
         {"object": "car", "activity": "drop", "no_result": True, "groupable": True},
+        {"object": "doll", "groupable": True, "activity": "drop", "no_result": True},
         {"object": "block", "activity": "build", "activity_result": "towers", "groupable": True},
         {"object": "train track", "activity": "build", "activity_result": "train track", "groupable": True,
          'min_age': 24, "location": "inside"},
@@ -320,17 +323,16 @@ class ObjectCatalog:
         {"object": "door", "activity": "knock", "no_result": True, 'max_age': 18},
         {"object": "piano", "activity": "play", "no_result": True, 'min_age': 18, "location": "inside"},
         {"object": "cake-mix", "activity": "mix", "no_result": True, 'min_age': 18, "location": "inside"},
-        {"object": "doll", "groupable": True, 'max_age': 120, "activity": "drop", "no_result": True},
         {"object": "clothing", "groupable": True},
         {"object": "puzzle piece", "groupable": True, "no_result": True},
         {"object": "thing around you", "groupable": True, "no_result": True},
-        {"fixed_sentence_social": "do domestic work activities together", 'min_age': 18, "location": "inside"},
-        {"fixed_sentence_social": "practice saying please & thankyou", 'min_age': 30},
+        {"fixed_sentence_social": "do domestic work activities together", 'min_age': 16, "location": "inside"},
+        {"fixed_sentence_social": "practice saying please & thankyou", 'min_age': 24},
         {"fixed_sentence_social": "ask child to choose from variety of toys", 'min_age': 18},
-        {"fixed_sentence_social": "play kiekeboe", 'max_age': 24},
+        {"fixed_sentence_social": "play kiekeboe", 'max_age': 16},
         {"fixed_sentence_social": "smile and laugh to your child ", 'max_age': 12},
         {"fixed_sentence_social": "Do the name game with other children ", 'min_age': 12},
-        {"fixed_sentence_social": "play red light/ green light (annemariakoekoek)", 'min_age': 24},
+        {"fixed_sentence_social": "play red light/ green light (annemariakoekoek)", 'min_age': 16},
         {"fixed_sentence_social": "talk about emotions in book", 'min_age': 36},
         {"fixed_sentence_language_comprehension": "talk about everything you do, 'subtitle'"},
         {"fixed_sentence_language_comprehension": "pick a book and read together"},
