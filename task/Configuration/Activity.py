@@ -52,6 +52,7 @@ class ActivityConfiguration:
                 seen_add(build_str)
                 print(self.count_soft_violations(activity), build_str)
 
+# checks soft and hard requirements, if soft violation is added, if hard, activitycomponent is skipped
     def check_component(self, component_config, check_soft_hard=True):
         def check_constraint(constraint, constraint_value, self, check_soft_hard=True):
             violations = 0
@@ -290,6 +291,7 @@ class FixedFineMotorActivityLComponent(ActivityComponent):
 
 
 class ActivityComponentsCatalog:
+    # domain rules for goals & activities are shown here
     catalog = {"LanguageProductionNorm": [
         TakeTurnsActivityComponent,
         ColorNamingActivityComponent,
@@ -297,13 +299,15 @@ class ActivityComponentsCatalog:
         GroupingObjectsComponent,
         FixedLanguageProductionActivityComponent
     ],
+
         "SocialSkillsNorm": [
                              TakeTurnsActivityComponent,
                              FixedSocialskillsActivityComponent,
                              HideAndSeekActivityComponent
                              ],
         "LanguageComprehensionNorm": [FixedLanguageComprehensionskillsActivityComponent,
-                                      DescribingObjectActivityComponent],
+                                      DescribingObjectActivityComponent,
+                                      HideAndSeekActivityComponent],
         "FineMotorSkillsNorm": [FixedFineMotorActivityLComponent],
         "GrossMotorSkillsNorm": [FixedGrossMotorActivityLComponent]
     }
@@ -325,6 +329,8 @@ class ObjectCatalog:
         {"object": "cake-mix", "activity": "mix", "no_result": True, 'min_age': 18, "location": "inside"},
         {"object": "clothing", "groupable": True},
         {"object": "puzzle piece", "groupable": True, "no_result": True},
+        {"object": "animal", "groupable":True, "no_result": True},
+        {"object": "book","no_result":True, 'min_age': 6},
         {"object": "thing around you", "groupable": True, "no_result": True},
         {"fixed_sentence_social": "do domestic work activities together", 'min_age': 16, "location": "inside"},
         {"fixed_sentence_social": "practice saying please & thankyou", 'min_age': 24},

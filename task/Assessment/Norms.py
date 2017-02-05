@@ -64,8 +64,6 @@ class Norm:
                     yield criteria.pop()
 
 
-# ToDO child prioritizer
-# TODO after 4x False stop questions
 
 class LanguageProductionNorm(Norm):
     def __init__(self):
@@ -100,7 +98,7 @@ class LanguageProductionNorm(Norm):
                                                           "Child uses adult intonation pattern including questions and exclamations  {}",
                                                           True))]))
 
-        self.normCriteria.append(BooleanCriterium("Child can answer many questions{}", True, 36,
+        self.normCriteria.append(BooleanCriterium("Child can properly answer many questions{}", True, 36,
                                                   parent_criterium=[BooleanCriterium(
                                                       "Child reacts in (semi) words to simple questions  {}", True)]))
 
