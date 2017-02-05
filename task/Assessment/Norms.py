@@ -41,7 +41,7 @@ class Norm:
             score = criterium.evaluate(property_value)
 
             if score is not None:
-                # TODO: a better approach for the norm score
+
                 # If the score is better than before, override it
                 self.norm_score = max(score, self.norm_score)
 
@@ -278,6 +278,7 @@ class Norms:
         pass
 
     def select_domain(self):
+        #selects the domain in order
         domain_list = ["LanguageProductionNorm", "LanguageComprehensionNorm", "SocialSkillsNorm",
                        "GrossMotorSkillsNorm", "FineMotorSkillsNorm"]
         for domain in domain_list:
